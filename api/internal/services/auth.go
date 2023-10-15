@@ -1,7 +1,6 @@
 package services
 
 import (
-  "log"
 	"arctid/api/internal/database"
 	"arctid/api/internal/models"
 	"arctid/api/internal/utils"
@@ -32,14 +31,10 @@ func HandleLogin(c *fiber.Ctx) error {
 		})
 	}
 
-  DB := *database.DB
   user := &models.User{}
-
-  DB.Where("username = ?", payload.Username).First(&user)
+  database.DB.Where("username = ?", payload.Username).First(&user)
 
   match, err := utils.ComparePasswordAndHash(payload.Password, user.Password)
-
-  log.Println(user)
   if err != nil || !match {
     return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
       "status": "FORBIDDEN",
@@ -64,7 +59,6 @@ func HandleLogin(c *fiber.Ctx) error {
 
 func HandleRegister(c *fiber.Ctx) error {
 	payload := new(RegisterBody)
-	DB := *database.DB
 
 	if err := c.BodyParser(payload); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -87,7 +81,7 @@ func HandleRegister(c *fiber.Ctx) error {
 		})
 	}
 
-	response := DB.Create(&models.User{
+	response := database.DB.Create(&models.User{
 		Firstname: payload.FirstName,
 		Lastname:  payload.LastName,
 		Email:     payload.Email,
