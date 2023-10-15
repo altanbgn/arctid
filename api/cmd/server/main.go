@@ -1,9 +1,9 @@
 package main
 
 import (
-  "fmt"
+  "arctid/api/internal/app"
 )
 
 func main() {
-  fmt.Println("Hello, World!")
+  app.Run()
 }
