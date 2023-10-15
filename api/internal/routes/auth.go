@@ -5,7 +5,7 @@ import (
   "github.com/gofiber/fiber/v2"
 )
 
-func Routes(v1 fiber.Router) {
+func LoadRoutes(v1 fiber.Router) {
   authRouter := v1.Group("/auth")
 
   authRouter.Post("/login", services.HandleLogin)

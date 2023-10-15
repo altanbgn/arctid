@@ -9,7 +9,7 @@ import (
 
 	"arctid/api/internal/config"
 	"arctid/api/internal/database"
-  "arctid/api/internal/transport/rest"
+	"arctid/api/internal/transport"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -19,7 +19,6 @@ import (
 
 func Run() {
   config.LoadDotenv()
-  config := config.Get()
 
   // Load Database
   database.Connect()
@@ -27,7 +26,7 @@ func Run() {
   // Fiber instance
   server := fiber.New(fiber.Config{
     Prefork: false,
-    ReadTimeout: config.TIMEOUT,
+    ReadTimeout: config.Env.TIMEOUT,
   })
 
   // Middlewares
@@ -37,7 +36,7 @@ func Run() {
 
   // Routes
   v1 := server.Group("/v1")
-  rest.LoadRoutes(v1)
+  transport.LoadRestRoutes(v1)
 
   // Signal channel to capture syscalls
   sig := make(chan os.Signal, 1)
@@ -50,7 +49,7 @@ func Run() {
   }()
 
   // Start server
-  serverAddr := fmt.Sprintf("%s:%d", config.HOST, config.PORT)
+  serverAddr := fmt.Sprintf("%s:%d", config.Env.HOST, config.Env.PORT)
   err := server.Listen(serverAddr)
 
   if err != nil {
